@@ -7,7 +7,7 @@ from PIL import Image, UnidentifiedImageError
 from gan_art.inference import load_generators, translate_image
 
 
-CHECKPOINT_PATH = Path(__file__).resolve().parent / "checkpoints/cyclegan_v2/latest.pt"
+CHECKPOINT_PATH = Path(__file__).resolve().parent / "checkpoints/cyclegan_v2_fast/latest.pt"
 DIRECTIONS = {
     "Foto → Monet": ("photo_to_monet", "monet"),
     "Monet → Foto": ("monet_to_photo", "photo"),
@@ -22,8 +22,8 @@ uploaded = st.file_uploader("Pilih gambar", type=("jpg", "jpeg", "png", "webp"))
 
 
 @st.cache_resource
-def get_generators():
-    return load_generators(CHECKPOINT_PATH)
+def get_generators(checkpoint_path: str, checkpoint_version: tuple[int, int]):
+    return load_generators(Path(checkpoint_path))
 
 
 if uploaded is not None:
@@ -42,7 +42,9 @@ if uploaded is not None:
     else:
         try:
             with st.spinner("Memuat model dan membuat gambar…"):
-                generators, device = get_generators()
+                checkpoint_stat = CHECKPOINT_PATH.stat()
+                checkpoint_version = (checkpoint_stat.st_mtime_ns, checkpoint_stat.st_size)
+                generators, device = get_generators(str(CHECKPOINT_PATH), checkpoint_version)
                 result = translate_image(source, generators[model_name], device)
         except Exception as error:
             st.error(f"Gagal memproses gambar: {error}")
