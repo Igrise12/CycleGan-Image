@@ -1,0 +1,23 @@
+[project]
+name = "gan-art"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Igrise12", email = "patrickmarcel65@gmail.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "matplotlib>=3.11.2",
+    "streamlit>=1.40",
+    "torch>=2.14.0",
+    "torchvision>=0.29.0",
+    "tqdm>=4.70.0",
+]
+
+[project.scripts]
+gan-art = "gan_art:main"
+
+[build-system]
+requires = ["uv_build>=0.12.8,<0.13.0"]
+build-backend = "uv_build"
